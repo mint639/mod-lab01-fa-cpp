@@ -1,95 +1,82 @@
 // Copyright 2022 UNN-IASR
-#include "fun.h"
-
-unsigned int faStr1(const char *str) {
-    char a = str[0];
-    int words_counter = 0;
-    bool in_word = false;
-    bool is_word_contains_numb = false;
-    int words_with_numb = 0;
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] != ' ') {
-            //new word
-            if (!in_word) {
-                in_word = true;
-                words_counter++;
-            }
-            else {
-                //inside word
-                if (str[i] >= '0' && str[i] <= '9') {
-                    is_word_contains_numb = true;
-                }
-            }
-            
+unsigned int faStr1(const char* str)
+{
+    int i = 0, count = 0, state = 0, F = 0;
+    while (str[i] != '\0')
+    {
+        if (state == 0 && str[i] != ' ')
+        {
+            if (str[i] > 57 || str[i] < 48) F = 1;
+            state = 1;
         }
-        //word ending
-        if (str[i] == ' ' && in_word) {
-            if (!is_word_contains_numb) {
-                words_with_numb++;
-            }
-            is_word_contains_numb = false;
-            in_word = false;
+        else if (state == 1 && str[i] == ' ')
+        {
+            if (F == 1) count++;
+            F = 0;
+            state = 0;
         }
+        else if (state == 1 && str[i] != ' ' && F == 1)
+        {
+            if (str[i] >= 48 && str[i] <= 57) F = 0;
+        }
+        i++;
     }
-    return words_with_numb;
+    if (state == 1 && F == 1) count++;
+    return count;
 }
 
-unsigned int faStr2(const char *str) {
-    char a = str[0];
-    int words_counter = 0;
-    bool in_word = false;
-    bool is_word_starts_with_capital_letter = false;
-    int searched_words_counter = 0;
-    bool second_switcher = false;
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] != ' ') {
-            //new word
-            if (!in_word) {
-                if (str[i] >= 'A' && str[i] <= 'Z') {
-                    is_word_starts_with_capital_letter = true;
-                }
-                in_word = true;
-                words_counter++;
-            }
-            else {
-                if (str[i] <= 'a' || str[i] >= 'z') {
-                    second_switcher = true;
-                }
-            }
-
+unsigned int faStr2(const char* str)
+{
+    int i = 0, count = 0, state = 0, F = 0;
+    while (str[i] != '\0')
+    {
+        if (state == 0 && str[i] >= 65 && str[i] <= 90)
+        {
+            state = 1;
+            F = 1;
         }
-        //word ending
-        if (str[i] == ' ' && in_word) {
-            if (is_word_starts_with_capital_letter && !second_switcher) {
-                searched_words_counter++;
-            }
-            is_word_starts_with_capital_letter = false;
-            second_switcher = false;
-            in_word = false;
+        else if (state == 1 && str[i] == ' ')
+        {
+            if (F == 1) count++;
+            F = 0;
+            state = 0;
         }
+        else if (state == 1 && str[i] != ' ' && F == 1)
+        {
+            if (str[i] >= 65 && str[i] <= 90) F = 0;
+            if (str[i] > 122 || str[i] < 65) F = 0;
+        }
+        i++;
     }
-    return searched_words_counter;
+    if (state == 1 && F == 1) count++;
+    return count;
 }
 
-unsigned int faStr3(const char *str) {
-    char a = str[0];
-    int words_counter = 0;
-    bool in_word = false;
-    int sum_word_symbols = 0;
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] != ' ') {
-            //new word
-            if (!in_word) {
-                in_word = true;
-                words_counter++;
-            }
-            sum_word_symbols++;
-
+unsigned int faStr3(const char* str)
+{
+    int i = 0, count = 0, state = 0, leng = 0, answer;
+    float sum = 0;
+    while (str[i] != '\0')
+    {
+        if (state == 0 && str[i] != ' ')
+        {
+            count++;
+            state = 1;
+            leng++;
         }
-        //word ending
-        if (str[i] == ' ' && in_word) {
-            in_word = false;
+        else if (state == 1 && str[i] == ' ')
+        {
+            sum = sum + leng;
+            state = 0;
+            leng = 0;
         }
+        else if (state == 1 && str[i] != ' ') leng++;
+        i++;
     }
-    return sum_word_symbols / words_counter;
+    if (state == 1) sum = sum + leng;
+    if (count == 0) return 0;
+    sum = sum / (float)count;
+    answer = sum;
+    if (sum - (float)answer >= 0.5) answer++;
+    return answer;
 }

@@ -1,94 +1,96 @@
 // Copyright 2022 UNN-IASR
 unsigned int faStr1(const char *str)
 {
-    char a = str[0];
-    int words_counter = 0;
-    bool in_word = false;
-    bool is_word_contains_numb = false;
-    int words_with_numb = 0;
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] != ' ') {
-            //new word
-            if (!in_word) {
-                in_word = true;
-                words_counter++;
-            }
-            else {
-                //inside word
-                if (str[i] >= '0' && str[i] <= '9') {
-                    is_word_contains_numb = true;
-                }
-            }
-            
-        }
-        //word ending
-        if (str[i] == ' ' && in_word) {
-            if (!is_word_contains_numb) {
-                words_with_numb++;
-            }
-            is_word_contains_numb = false;
-            in_word = false;
-        }
-    }
-    return words_with_numb;
+    int i = 0,
+		count = 0,
+		in = 0,//0-вне слова
+		F = 0; //0-обнаружилась цифра
+	while (str[i] != '\0')
+	{
+		if (in == 0 && str[i] != ' ')
+		{
+			if (str[i] > 57 || str[i] < 48) F = 1;
+			in = 1;
+		}
+		else if (in == 1 && str[i] != ' ' && F == 1)
+		{
+			if (str[i] >= 48 && str[i] <= 57) F = 0;
+		}
+		else if (in == 1 && str[i] == ' ') 
+		{
+			if (F == 1) count++;
+			F = 0;
+			in = 0;
+		}
+
+		i++;
+	}
+	if (in == 1 && F == 1) count++;
+	return count;
 }
+
+
+
 unsigned int faStr2(const char *str)
 {
-    char a = str[0];
-    int words_counter = 0;
-    bool in_word = false;
-    bool is_word_starts_with_capital_letter = false;
-    int searched_words_counter = 0;
-    bool second_switcher = false;
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] != ' ') {
-            //new word
-            if (!in_word) {
-                if (str[i] >= 'A' && str[i] <= 'Z') {
-                    is_word_starts_with_capital_letter = true;
-                }
-                in_word = true;
-                words_counter++;
-            }
-            else {
-                if (str[i] <= 'a' || str[i] >= 'z') {
-                    second_switcher = true;
-                }
-            }
+    int i = 0, count = 0,
+		in = 0,
+		F = 0;
+	while (str[i] != '\0')
+	{
+		if (in == 0 && str[i] >= 65 && str[i] <= 90)
+		{
+			in = 1;
+			F = 1;
+		}
+		else if (in == 1 && str[i] != ' ' && F == 1)
+		{
+			if (str[i] >= 65 && str[i] <= 90) F = 0;
+			if (str[i] > 122 || str[i] < 65) F = 0;
+		}
+		else if (in == 1 && str[i] == ' ')
+		{
+			if (F == 1) count++;
+			F = 0;
+			in = 0;
+		}
 
-        }
-        //word ending
-        if (str[i] == ' ' && in_word) {
-            if (is_word_starts_with_capital_letter && !second_switcher) {
-                searched_words_counter++;
-            }
-            is_word_starts_with_capital_letter = false;
-            second_switcher = false;
-            in_word = false;
-        }
-    }
-    return searched_words_counter;
+		i++;
+	}
+	if (in == 1 && F == 1) count++;
+	return count;
 }
+
+
+
+
 unsigned int faStr3(const char *str)
 {
-    char a = str[0];
-    int words_counter = 0;
-    bool in_word = false;
-    int sum_word_symbols = 0;
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] != ' ') {
-            //new word
-            if (!in_word) {
-                in_word = true;
-                words_counter++;
-            }
-            sum_word_symbols++;
-
-        }
-        //word ending
-        if (str[i] == ' ' && in_word) {
-            in_word = false;
-        }
-    }
-    return sum_word_symbols / words_counter;
+    int i = 0, count = 0,
+		in = 0,
+		leng = 0,
+		answer;
+	float sum = 0;
+	while (str[i] != '\0')
+	{
+		if (in == 0 && str[i] != ' ')
+		{
+			count++;
+			in = 1;
+			leng++;
+		}
+		else if (in == 1 && str[i] != ' ') leng++;
+		else if (in == 1 && str[i] == ' ')
+		{
+			sum = sum + leng;
+			in = 0;
+			leng = 0;
+		}
+		i++;
+	}
+	if (in == 1) sum = sum + leng;
+	sum = sum / (float)count;
+	answer = sum;
+	if (sum - (float)answer >= 0.5) answer++;
+	return answer;
 }
